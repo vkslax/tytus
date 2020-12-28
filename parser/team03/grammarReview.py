@@ -726,19 +726,27 @@ def p_list_names(t):
                     | POR
                     '''
     if len(t) == 6:
+        lista=None
         childsProduction  = addNotNoneChild(t,[3])
-        graph_ref = graph_node(str("list_names"),    [t[1],t[2],t[3],t[4],t[5]]       ,childsProduction)
+        if t[1] != None:
+            lista=t[1][0]
+            childsProduction.append(lista.graph_ref)            
+        graph_ref = graph_node(str("list_names"),    [lista,t[2],t[3],t[4],t[5]]       ,childsProduction)
         addCad("**\<LIST_NAMES>** ::=  \<LIST_NAMES>  ',' tNames tAs tTexto  ")
         t[3].alias = t[5]
-        t[1].graph_ref=graph_ref
+        t[1][0].graph_ref=graph_ref
         t[1].append(t[3])
         t[0] = t[1]
                      
     elif len(t) == 4:
-        #childsProduction  = addNotNoneChild(t,[1])
-        graph_ref = graph_node(str("list_names"),    [t[1]]       ,[])
+        lista=None
+        childsProduction  = addNotNoneChild(t,[3])
+        if t[1] != None:
+            lista=t[1][0]
+            childsProduction.append(lista.graph_ref)    
+        graph_ref = graph_node(str("list_names"),    [lista,t[2],t[3]]       ,childsProduction)
         addCad("**\<LIST_NAMES>** ::=   \<LIST_NAMES>  ',' tNames ")
-        t[1].graph_ref=graph_ref
+        t[1][0].graph_ref=graph_ref
         t[1].append(t[3])
         t[0] = t[1]
         
@@ -960,7 +968,7 @@ def p_stm_update(t):
         if t[4] != None:
             lista= t[4][0]
             childsProduction.append(lista.graph_ref)
-        graph_ref = graph_node(str("stm_update"),    [t[1], t[2], t[3], t[4], t[5]], childsProduction)
+        graph_ref = graph_node(str("stm_update"),    [t[1], t[2], t[3], lista, t[5]], childsProduction)
         addCad("**\<STM_UPDATE>** ::= tUpdate tIdentifier tSet \<UPDATE_LIST> \<WHERE_CLAUSE> ")
         t[0] = Update(t[2], t[4], t[5], token_up.lineno, token_up.lexpos, graph_ref)
     else: 
@@ -976,15 +984,20 @@ def p_stm_update(t):
 def p_update_list(t):
     '''update_list  : update_list COMA ID IGUAL logicExpression
                     | ID IGUAL logicExpression'''
-    token_up = t.slice[1]
     if len(t) == 6:
-        childsProduction  = addNotNoneChild(t,[1,5])
-        graph_ref = graph_node(str("update_list"),    [t[1], t[2], t[3], t[4], t[5]], childsProduction)
+        token_up = t.slice[3]
+        lista = None
+        childsProduction  = addNotNoneChild(t,[5])
+        if t[1] != None:
+            lista= t[1][0]
+            childsProduction.append(lista.graph_ref)
+        graph_ref = graph_node(str("update_list"),    [lista, t[2], t[3], t[4], t[5]], childsProduction)
         addCad("**\<UPDATE_LIST>** ::= \<UPDATE_LIST> ',' tIdentifier '=' \<EXP_LOG> ")
         t[1][0].graph_ref=graph_ref
         t[1].append(UpdateItem(t[3], t[5], token_up.lineno, token_up.lexpos, graph_ref))
         t[0] = t[1]
     else: 
+        token_up = t.slice[1]
         childsProduction  = addNotNoneChild(t,[3])
         graph_ref = graph_node(str("update_list"),    [t[1], t[2], t[3]], childsProduction)
         addCad("**\<UPDATE_LIST>** ::= tIdentifier '=' \<EXP_LOG> ")
@@ -1527,12 +1540,12 @@ def p_relExpression(t):
         addCad("**\<EXP_REL>** ::=  \<EXP> '!=' \<EXP> ")
         t[0] = RelationalExpression(t[1], t[3], OpRelational.NOT_EQUALS, 0, 0, graph_ref)
     elif token.type == "NOT":
-        childsProduction  = addNotNoneChild(t,[1,3])
+        childsProduction  = addNotNoneChild(t,[1])
         graph_ref = graph_node(str("EXP_REL"),    [t[1], t[2] ,t[3]]       ,childsProduction)
         addCad("**\<EXP_REL>** ::=  \<EXP> tNot tLike [tTexto|False|True] ")
         t[0] = RelationalExpression(t[1], t[4], OpRelational.NOT_LIKE, 0, 0, graph_ref)
     elif token.type == "LIKE":
-        childsProduction  = addNotNoneChild(t,[1,3])
+        childsProduction  = addNotNoneChild(t,[1])
         graph_ref = graph_node(str("EXP_REL"),    [t[1], t[2] ,t[3]]       ,childsProduction)
         addCad("**\<EXP_REL>** ::=  \<EXP> tLike [tTexto|False|True] ")
         t[0] = RelationalExpression(t[1], t[3], OpRelational.LIKE, 0, 0, graph_ref)
