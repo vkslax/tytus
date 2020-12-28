@@ -134,6 +134,8 @@ def generateReports():
 ##solo es para sintetizar el id de los nodos,,, borrar cuando ya no se use
 class upNodo:
     def __init__(self, val, line, column, graph_ref):
+        self.line = line
+        self.column = column
         self.val = val
         self.graph_ref = graph_ref
 

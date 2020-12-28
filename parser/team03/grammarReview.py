@@ -1260,7 +1260,7 @@ def p_stm_alter1(t):
         #####  
     if token_alter.type == "ID":
         childsProduction = addNotNoneChild(t, [8, 9])
-        graph_ref = graph_node(str("stm_alter"), [t[1], t[2], t[3], t[4], t[5], t[6], t[7], t[8]], childsProduction)
+        graph_ref = graph_node(str("stm_alter"), [t[1], t[2], t[3], t[4], t[5], t[6], t[7], t[8],t[9]], childsProduction)
         addCad("**\<STM_ALTER>** ::=  tAlter tTable tIdentifier tAlter tColumn tType \<TYPE> \<PARAM_INT_OPT>   ")
         t[0] = AlterTableChangeColumnType(t[3], t[6], t[8], t[8].max_size, token_alter.lineno, token_alter.lexpos, graph_ref)
 
