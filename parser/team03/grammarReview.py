@@ -2156,12 +2156,15 @@ class grammarReview:
             try:
                 val = instruccion.execute(ST, None)
                 print("AST excute result: ", val)
-                self.set_result(str(val)+'\n\n')
+                if isinstance(instruccion, Select) or isinstance(instruccion, Union) \
+                        or isinstance(instruccion, Intersect) or isinstance(instruccion, Except):
+                    val = tabulate(val[1], val[0], tablefmt="psql")
+                self.set_result(str(val) + '\n\n')
             except our_error as named_error:
                 errorsList.append(named_error)
 
         for e in errorsList:
-            print(e,"\n")
+            print(e, "\n")
         
         
     def set_result(self, valor):

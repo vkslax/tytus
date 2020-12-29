@@ -32,8 +32,8 @@ class InsertInto(ASTNode):
                     # looking in column list if declared field appears or None
                     match = next((col for col in self.column_list if col.val == field_symbol.name), None)
                     # Run validations only if result is not None
-                    value_related_to_match = self.column_list.index(match)
                     if match is not None:
+                        value_related_to_match = self.column_list.index(match)
                         #to ENUM 
                         StmENUM = None
                         try:
@@ -45,6 +45,8 @@ class InsertInto(ASTNode):
                         # TODO ADD HERE TYPE VALIDATIONS PER FIELD, JUST ONE ADDED BY NOW TO GIVE EXAMPLE
                         if field_symbol.field_type.upper() == 'INTEGER' and type(self.insert_list[value_related_to_match].val) != int:
                             raise Error(0, 0, ErrorType.SEMANTIC, f'Field {field_symbol.name} must be an integer type')
+                    else:
+                        raise Error(0, 0, ErrorType.SEMANTIC, f'Field does not exists in table declaration')
                     to_insert.append(self.insert_list[value_related_to_match].val)
                 # TODO ADD HERE CHECK VALIDATION
             else:
@@ -69,7 +71,7 @@ class InsertInto(ASTNode):
                     raise Error(0, 0, ErrorType.RUNTIME, '42P07: table_does_not_exists')
                 elif result == 4:
                     raise Error(0, 0, ErrorType.RUNTIME, '42P10: duplicated_primary_key')
-        return True
+        return f'Insert in {self.table_name}'
 
 
 # This class probably is not going to be needed, depends on how the contents are gonna be handled

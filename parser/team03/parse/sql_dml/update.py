@@ -36,7 +36,7 @@ class Update(ASTNode):
         for item in self.update_list:
             # reg[item.column_name] = item.exp.val
             column_symbol = next((sym for sym in all_fields_symbol if sym.field_name == item.column_name), None)
-            reg[column_symbol.field_index] = item.exp.val
+            reg[column_symbol.field_index] = item.exp.execute(table, tree)
         for index in to_update:
             result = update(table.get_current_db().name, self.table_name, reg, [index])
             if result == 1:
@@ -47,7 +47,7 @@ class Update(ASTNode):
                 raise Error(0, 0, ErrorType.RUNTIME, '42P07: table_does_not_exists')
             elif result == 4:
                 raise Error(0, 0, ErrorType.RUNTIME, '42P10: PK_does_not_exists')
-        return True
+        return f'Update in {self.table_name}'
 
 
 class UpdateItem(ASTNode):
